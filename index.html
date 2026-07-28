@@ -296,27 +296,18 @@
         
         restartBtn.addEventListener('click', () => { window.location.reload(); });
 
-        // ================= HỆ THỐNG QUẢN LÝ CỬA SỔ & DỪNG TÁC VỤ AI =================
+        // ================= HỆ THỐNG QUẢN LÝ CỬA SỔ & DỪNG TÁC VỤ AI (Sửa lỗi nút Đóng lại) =================
         function closeAllPopups() {
             document.querySelectorAll('.game-panel').forEach(p => p.classList.remove('active'));
-            overlayDetail.classList.remove('active'); 
-            overlayGuide.classList.remove('active');
-            detailBtn.classList.remove('active-state'); 
-            guideBtn.classList.remove('active-state'); 
-            qaBtn.classList.remove('active-state'); 
-            mvBtn.classList.remove('active-state'); 
-            roleplayBtn.classList.remove('active-state');
-            body.classList.remove('info-active'); 
-            stopAllAITasks();
+            overlayDetail.classList.remove('active'); overlayGuide.classList.remove('active');
+            detailBtn.classList.remove('active-state'); guideBtn.classList.remove('active-state'); qaBtn.classList.remove('active-state'); mvBtn.classList.remove('active-state'); roleplayBtn.classList.remove('active-state');
+            body.classList.remove('info-active'); stopAllAITasks();
             
-            // Fix lỗi kẹt nút Đóng lại
+            // Trả lại tên gốc cho nút
             detailBtn.textContent = dict[selectedLang].detailBtn;
             guideBtn.textContent = dict[selectedLang].guideBtn;
 
-            if (isMainExperienceStarted && audioVn.paused && audioEn.paused) { 
-                if (selectedLang === 'vi') audioVn.play().catch(e=>e); 
-                else audioEn.play().catch(e=>e); 
-            }
+            if (isMainExperienceStarted && audioVn.paused && audioEn.paused) { if (selectedLang === 'vi') audioVn.play().catch(e=>e); else audioEn.play().catch(e=>e); }
         }
         window.closeAllPopups = closeAllPopups; 
 
@@ -338,7 +329,7 @@
         document.getElementById('qa-input').addEventListener('focus', () => { setTimeout(() => document.getElementById('qa-input').scrollIntoView({ behavior: 'smooth', block: 'center' }), 300); });
         document.getElementById('mv-input').addEventListener('focus', () => { setTimeout(() => document.getElementById('mv-input').scrollIntoView({ behavior: 'smooth', block: 'center' }), 300); });
 
-        // ================= CƠ CHẾ THANH TIẾN ĐỘ (%) =================
+        // ================= CƠ CHẾ THANH TIẾN ĐỘ (%) CẢI TIẾN =================
         function startProgressBar(containerId, barId, textId, timeInSeconds) { 
             if (progressHideTimeout) { clearTimeout(progressHideTimeout); progressHideTimeout = null; }
             document.getElementById(containerId).style.display = 'block'; 
@@ -454,7 +445,7 @@
             e.stopPropagation(); closeAllPopups(); audioVn.pause(); audioEn.pause();
             roleplayBtn.classList.add('active-state'); document.getElementById('roleplay-panel').classList.add('active');
             rpHistory = []; rpTurn = 1; document.getElementById('rp-options-container').innerHTML = ''; document.getElementById('btnExportRoleplay').style.display = 'none'; 
-            document.getElementById('rp-npc-text').textContent = "Đang kết nối đến Hoàng đế Quang Trung...";
+            document.getElementById('rp-npc-text').textContent = "Đang triệu tập các tướng lĩnh Tây Sơn...";
             fetchRoleplayTurnData(null).then(data => renderRoleplayTurn(data)).catch(e => { document.getElementById('rp-npc-text').textContent = "Lỗi kết nối. Không thể bắt đầu."; }); 
         });
 
@@ -574,15 +565,15 @@
 
         window.addEventListener('click', (e) => { if (!e.target.closest('.overlay-layer') && !e.target.closest('.game-panel') && !e.target.closest('#main-ui') && !e.target.closest('#top-controls') && !e.target.closest('#intro-screen')) { closeAllPopups(); } });
 
-        // ================= XUẤT BÁO CÁO =================
+        // ================= XUẤT BÁO CÁO (ĐÃ SỬA LỖI MẤT CHỮ TRONG PDF) =================
         function exportPDF(contentHTML, fileName) {
             const printContent = `
-                <div style="padding: 30px; font-family: 'Times New Roman', serif; color: #000; background: #fff; width: 100%; max-width: 800px; margin: auto;">
+                <div style="padding: 30px 40px 30px 30px; font-family: 'Times New Roman', serif; color: #000; background: #fff; width: 100%; box-sizing: border-box; word-wrap: break-word; overflow-wrap: break-word;">
                     <h2 style="font-size: 24px; color: #b33939; text-align: center; border-bottom: 2px solid #b33939; padding-bottom: 10px; margin-bottom: 20px;">
                         BÁO CÁO HỌC TẬP LỊCH SỬ - QUANG TRUNG
                     </h2>
                     <h3 style="font-size: 18px; color: #333;">Người học: ${playerName}</h3>
-                    <div style="font-size: 16px; line-height: 1.6; text-align: justify;">
+                    <div style="font-size: 16px; line-height: 1.6; text-align: justify; word-wrap: break-word; overflow-wrap: break-word; width: 100%; box-sizing: border-box;">
                         ${contentHTML}
                     </div>
                 </div>
@@ -593,18 +584,18 @@
         
         document.getElementById('btnExportWhatIf').addEventListener('click', () => { 
             sendReportToTeacher('Đa Vũ Trụ (Quang Trung)'); 
-            let html = "<h4>Hành trình Đa vũ trụ</h4><ul>"; 
-            mvHistory.forEach(h => { html += `<li style="margin-bottom:10px;"><b>${h.role === 'user' ? 'Hỏi' : 'Phân tích'}:</b> ${h.content}</li>`; }); 
+            let html = "<h4>Hành trình Đa vũ trụ</h4><ul style='padding-left: 20px; margin-right: 15px;'>"; 
+            mvHistory.forEach(h => { html += `<li style="margin-bottom:10px; word-wrap: break-word; overflow-wrap: break-word; text-align: justify;"><b>${h.role === 'user' ? 'Hỏi' : 'Phân tích'}:</b> ${h.content}</li>`; }); 
             html += "</ul>"; 
             exportPDF(html, 'Bao_Cao_Da_Vu_Tru_Quang_Trung.pdf'); 
         });
 
         document.getElementById('btnExportRoleplay').addEventListener('click', () => { 
             sendReportToTeacher('Nhập Vai (Quang Trung)'); 
-            let html = "<h4>Báo cáo Quyết sách Nhập vai</h4><ul>"; 
+            let html = "<h4>Báo cáo Quyết sách Nhập vai</h4><ul style='padding-left: 20px; margin-right: 15px;'>"; 
             rpHistory.forEach(h => { 
-                if(h.role === 'user') html += `<li style="margin-bottom:10px;"><b>Hoàng Đế:</b> ${h.content}</li>`; 
-                else { let d = JSON.parse(h.content); html += `<li style="margin-bottom:10px;"><b>Cục diện:</b> ${d.npcDialogue}</li>`; if(d.isGameOver) html += `<li style="margin-bottom:10px;"><b>TỔNG KẾT:</b> ${d.endReason}</li>`; } 
+                if(h.role === 'user') html += `<li style="margin-bottom:10px; word-wrap: break-word; overflow-wrap: break-word; text-align: justify;"><b>Hoàng Đế:</b> ${h.content}</li>`; 
+                else { let d = JSON.parse(h.content); html += `<li style="margin-bottom:10px; word-wrap: break-word; overflow-wrap: break-word; text-align: justify;"><b>Cục diện:</b> ${d.npcDialogue}</li>`; if(d.isGameOver) html += `<li style="margin-bottom:10px; word-wrap: break-word; overflow-wrap: break-word; text-align: justify;"><b>TỔNG KẾT:</b> ${d.endReason}</li>`; } 
             }); 
             html += "</ul>"; 
             exportPDF(html, 'Hoc_Ba_Lich_Su_Quang_Trung.pdf'); 
